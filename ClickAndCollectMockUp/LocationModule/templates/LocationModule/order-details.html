@@ -1,0 +1,98 @@
+<!-- THIS HAS BEEN GENERATED WITH ChatGPT -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="keywords" content="spam"/>
+        <meta name="description" content="eggs"/>
+        <title>Data List</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+            }
+            table, th, td {
+                border: 1px solid #ddd;
+            }
+            th, td {
+                padding: 10px;
+                text-align: left;
+            }
+            th {
+                background-color: #f4f4f4;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Ordredetaljer</h1>
+        <h2>Ordrenummer: {{ order.id }}</h2>
+        <h2>Ordrestatus: {{ order.order_status }}</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Varenummer</th>
+                    <th>Mængde</th>
+                    <th>Varestatus</th>
+                    <th>Varehandling</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order_line in order_lines %}
+                <tr>
+                    <td>{{ order_line.item_number }}</td>
+                    <td>{{ order_line.amount }}</td>
+                    <td>{{ order_line.order_line_status }}</td>
+                    <td>
+                        <form method="post" action="{% url 'show_order' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="details" value="{{ order.id }}">
+                            {% if "Not-ready" in order_line.order_line_status %}
+                                <button type="submit" 
+                                    class="btn btn-primary"
+                                    name="receive"
+                                    value="{{ order_line.id }}"
+                                    >
+                                    Modtag vare
+                                </button>
+                            {% else %}
+
+                            {% endif %}
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">Denne ordre har ingen vare</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <h2>Ordrelog:</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tidspunkt</th>
+                    <th>Hændelse</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order_log in order_logs %}
+                <tr>
+                    <td>{{ order_log.time_stamp }}</td>
+                    <td>{{ order_log.incident }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2">Denne ordre har ingen log</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+</html>
